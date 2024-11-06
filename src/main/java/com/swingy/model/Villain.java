@@ -1,5 +1,7 @@
 package com.swingy.model;
 
+import jakarta.validation.constraints.NotNull;
+
 enum VillainClass {
     normal,
     elite,
@@ -7,7 +9,10 @@ enum VillainClass {
 }
 
 public class Villain extends Person {
+    @NotNull(message = "Villain Class should not be null")
     private VillainClass villainClass;
+
+    @NotNull(message = "Artifact should not be null")
     private Artifact itemOwned;
 
     public Villain() {
