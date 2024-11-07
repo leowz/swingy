@@ -105,6 +105,11 @@ public class GameController {
         return false;
     }
 
+    public void initNextGame() {
+        Hero hero = this.map.heroForNextGame();
+        this.map = new GameMap(hero);
+    }
+
     public void executeRound() {
         System.out.println(this.map);
         Move nextMove = nextMoveInput();
@@ -133,8 +138,14 @@ public class GameController {
                     this.map.moveHero(nextPoint);
                 }
             } else {
-                System.out.println("Your Hero wins, now go to next game!");
-                // this.initNextGame();
+                System.out.println();
+                System.out.println("Your Hero wins!!! now go to next game!");
+                this.initNextGame();
+                System.out.println();
+                System.out.println("Game map: ");
+                System.out.println(this.map);
+                this.map.displayHero();
+                System.out.println();
             }
         }
     }

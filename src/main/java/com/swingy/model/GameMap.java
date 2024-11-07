@@ -54,15 +54,23 @@ public class GameMap {
         return this.hero.isAlive();
     }
 
+    public void displayHero() {
+        System.out.println("hero: ");
+        System.out.println(this.hero);
+    }
+
+    public Hero heroForNextGame() {
+        if (hero.hitPoints < 100) {
+            hero.upgradeStats(100, 0, 0);
+        }
+        return this.hero;
+    }
+
     public void initVillain() {
         for (int i = 0; i < this.villains.length; i++) {
             Point pos = generateRandomPositionOnMap();
-            // System.out.println("position: " + pos + " " +
-            // this.map[pos.getX()][pos.getY()]);
             if (pos != null && (this.map[pos.getX()][pos.getY()] == null)) {
                 this.map[pos.getX()][pos.getY()] = this.villains[i];
-                // System.out.println("after insert position: " + pos + " " +
-                // this.map[pos.getX()][pos.getY()]);
             }
         }
     }
@@ -87,7 +95,7 @@ public class GameMap {
 
     public Point moveEast() {
         int x = this.heroPosition.getX();
-        if (x >= this.size)
+        if (x + 1 >= this.size)
             return null;
         else {
             return new Point(x + 1, this.heroPosition.getY());

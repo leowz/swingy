@@ -36,6 +36,9 @@ public class Hero extends Person {
         int damageAfterDefense = this.getDamageAfrerDefense(damage,
                 this.defense + (this.armor != null ? this.armor.getIncDefense() : 0));
         int damageAfterHitHelm = damageAfterDefense - (this.helm != null ? this.helm.getIncHp() : 0);
+        if (damageAfterHitHelm <= 0) {
+            damageAfterHitHelm = 1;
+        }
         System.out.println("takeDamage damage: " + damageAfterHitHelm);
         if (damageAfterHitHelm <= 0)
             return;
@@ -83,7 +86,7 @@ public class Hero extends Person {
         return level;
     }
 
-    public void updateStats(int hp, int attack, int defense) {
+    public void upgradeStats(int hp, int attack, int defense) {
         this.hitPoints += hp;
         if (this.hitPoints > 100)
             this.hitPoints = 100;
@@ -97,13 +100,13 @@ public class Hero extends Person {
 
     public void gainExperience(int exp) {
         System.out.println("Hero gained experence: " + exp);
-        this.experience += exp;
+        this.experience += exp + exp * this.level * 0.3;
         int nextLevel = getLevel(this.level, this.experience);
         System.out.println("nextLevel " + nextLevel);
         if (this.level < nextLevel) {
             System.out.println("Hero promot from level: " + this.level + " to level: " + nextLevel);
             System.out.println("Hero regain 30 hp due to the level up!");
-            this.updateStats(30, 2, 1);
+            this.upgradeStats(30, 2, 1);
             this.level = nextLevel;
         }
     }
