@@ -113,7 +113,17 @@ public class GameMap {
         }
     }
 
-    public void startBattle(Point villainPoint) {
+    public void heroTakeDroppedItem(Artifact item) {
+        this.hero.equipeAritifact(item);
+        System.out.println("Your hero with new items:");
+        showHeroItems();
+    }
+
+    public void showHeroItems() {
+        this.hero.showItems();
+    }
+
+    public Artifact startBattle(Point villainPoint) {
         Villain currentVillain = (Villain) this.map[villainPoint.getX()][villainPoint.getY()];
         int roundCounter = 0;
         System.out.println();
@@ -147,13 +157,15 @@ public class GameMap {
                     System.err.println("");
                 }
                 if (hero.isAlive()) {
-                    // after batter, herso still alive. hero gets exp
                     System.out.println("Hero wins the battle!");
+                    hero.gainExperience(currentVillain.experience);
+                    return currentVillain.getArtifact();
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
+        return null;
     }
 
     public Point nextPosition(Move nextMove) {

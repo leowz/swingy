@@ -12,7 +12,7 @@ public class Weapon extends Artifact {
     }
 
     public String toString() {
-        return "Artifact: Weapon attack 10";
+        return "Artifact: Weapon attack: " + this.increaseAttack;
     }
 
     public int addedAttackPoints() {

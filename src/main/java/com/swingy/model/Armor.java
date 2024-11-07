@@ -18,6 +18,6 @@ public class Armor extends Artifact {
     }
 
     public String toString() {
-        return "Artifact: Armor defense 20";
+        return "Artifact: Armor defense: " + this.increaseDefense;
     }
 }

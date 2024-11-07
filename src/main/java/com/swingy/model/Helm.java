@@ -16,6 +16,6 @@ public class Helm extends Artifact {
     }
 
     public String toString() {
-        return "Artifact: Helm HP 5";
+        return "Artifact: Helm HP: " + this.increaseHitPoint;
     }
 }

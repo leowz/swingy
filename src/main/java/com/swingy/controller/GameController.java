@@ -3,6 +3,7 @@ package com.swingy.controller;
 import java.util.Scanner;
 import java.lang.System;
 
+import com.swingy.model.Artifact;
 import com.swingy.model.GameMap;
 import com.swingy.model.Hero;
 import com.swingy.model.HeroClass;
@@ -89,6 +90,21 @@ public class GameController {
         }
     }
 
+    public boolean isPlayerWantTheDroppedItem(Artifact item) {
+        System.out.println();
+        System.out.println("Villan Dropped the item: \n" + item);
+        this.map.showHeroItems();
+        System.out.println();
+        System.out.println("Do you want equipe this new equipement? Old one will be replaced.");
+        System.out.println("1. Yes");
+        System.out.println("2. No");
+        System.out.println("Please input the number of your decision");
+        int decision = this.scanner.nextInt();
+        if (decision == 1)
+            return true;
+        return false;
+    }
+
     public void executeRound() {
         System.out.println(this.map);
         Move nextMove = nextMoveInput();
@@ -103,8 +119,11 @@ public class GameController {
                         // go to previous position;
                         System.out.println("Run back to previous position.");
                     } else {
-                        this.map.startBattle(nextPoint);
+                        Artifact droppedItem = this.map.startBattle(nextPoint);
                         if (this.map.isHeroAlive()) {
+                            if (droppedItem != null && this.isPlayerWantTheDroppedItem(droppedItem)) {
+                                this.map.heroTakeDroppedItem(droppedItem);
+                            }
                             this.map.moveHero(nextPoint);
                         } else {
                             System.out.println("Hero dead, game end!");

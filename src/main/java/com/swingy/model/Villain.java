@@ -34,6 +34,17 @@ public class Villain extends Person {
         }
         this.attack = Utils.getRandomNumber(5 + addition, 25 + addition);
         this.defense = Utils.getRandomNumber(10 + addition, 15 + addition);
+        if (villainClass == VillainClass.normal) {
+            this.experience = 500 + Utils.getRandomNumber(-120, 120);
+        } else if (villainClass == VillainClass.elite) {
+            this.experience = 800 + Utils.getRandomNumber(-150, 150);
+        } else if (villainClass == VillainClass.boss) {
+            this.experience = 1000 + Utils.getRandomNumber(-100, 300);
+        }
+    }
+
+    public Artifact getArtifact() {
+        return itemOwned;
     }
 
     static public Villain[] villainsFactory(int nbr) {
