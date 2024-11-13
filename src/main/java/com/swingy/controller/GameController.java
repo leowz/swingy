@@ -1,8 +1,11 @@
 package com.swingy.controller;
 
 import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
 import java.lang.System;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swingy.model.Artifact;
 import com.swingy.model.GameMap;
 import com.swingy.model.Hero;
@@ -15,6 +18,9 @@ public class GameController {
     private GameMap map;
     private boolean gui;
     private Scanner scanner;
+    private String mapFileName = "map.json";
+    private ObjectMapper om = new ObjectMapper();
+    private File mapFile = new File(mapFileName);
 
     public GameController(boolean gui) {
         this.gui = gui;
@@ -26,7 +32,7 @@ public class GameController {
     public void start() {
         try {
             System.out.println("game starts");
-            if (this.couldLoadGame()) {
+            if (this.shouldLoadTheGameIfExist()) {
                 System.out.println("load game");
                 this.loadGame();
             } else {
@@ -59,12 +65,47 @@ public class GameController {
         }
     }
 
+    public boolean shouldLoadTheGameIfExist() {
+        if (this.couldLoadGame()) {
+            System.out.println("1. Start New Game");
+            System.out.println("2. Load Saved Game");
+            System.out.println("Please input the number of your decision");
+            int decision = this.scanner.nextInt();
+            if (decision == 2)
+                return true;
+            return false;
+        }
+        return false;
+    }
+
     public void loadGame() {
-        // if (this.gui) {
-        // this.initGame();
-        // } else if (!this.gui) {
-        // this.initGuiGame();
-        // }
+        if (mapFile.exists()) {
+            try {
+                GameMap loadedMap = om.readValue(mapFile, GameMap.class);
+                this.map = loadedMap;
+                mapFile.delete();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveGame() {
+        System.out.println("saving game before exit");
+        try {
+
+            // covert Java object to JSON strings
+            String json = om.writeValueAsString(map);
+
+            // output: {"name":"mkyong","age":42}
+            System.out.println("serilise Map");
+            System.out.println(json);
+
+            om.writeValue(mapFile, map);
+            System.out.println("User object saved to user.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isPlayerWantEscape() {
@@ -151,7 +192,7 @@ public class GameController {
     }
 
     public boolean couldLoadGame() {
-        return false;
+        return mapFile.exists();
     }
 
     public boolean isGameEnded() {

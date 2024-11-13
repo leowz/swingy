@@ -1,5 +1,7 @@
 package com.swingy.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -19,6 +21,49 @@ public class GameMap {
     @NotNull(message = "size should not be null")
     @Size(min = 1, max = 100, message = "Size should be between 1 and 100")
     private int size;
+
+    public GameMap() {
+    }
+
+    public void setMap(Person[][] map) {
+        this.map = map;
+    }
+
+    public Person[][] getMap() {
+        return map;
+    }
+
+    public void setVillains(Villain[] villains) {
+        this.villains = villains;
+    }
+
+    public Villain[] getVillains() {
+        return villains;
+    }
+
+    public void setHeroPosition(Point heroPosition) {
+        this.heroPosition = heroPosition;
+    }
+
+    public Point getHeroPosition() {
+        return heroPosition;
+    }
+
+    public void setHero(Hero hero) {
+        this.hero = hero;
+    }
+
+    public Hero getHero() {
+        return hero;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getSize() {
+        return size;
+    }
 
     public GameMap(Hero hero) {
         int size = (hero.level - 1) * 5 + 10 - (hero.level % 2);
@@ -50,6 +95,7 @@ public class GameMap {
         return null;
     }
 
+    @JsonIgnore
     public boolean isHeroAlive() {
         return this.hero.isAlive();
     }
@@ -167,7 +213,7 @@ public class GameMap {
                 if (hero.isAlive()) {
                     System.out.println("Hero wins the battle!");
                     hero.gainExperience(currentVillain.experience);
-                    return currentVillain.getArtifact();
+                    return currentVillain.getItemOwned();
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

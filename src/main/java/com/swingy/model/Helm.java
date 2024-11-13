@@ -11,8 +11,12 @@ public class Helm extends Artifact {
         increaseHitPoint = 5 + randomness;
     }
 
-    public int getIncHp() {
-        return this.increaseHitPoint;
+    public void setIncreaseHitPoint(int increaseHitPoint) {
+        this.increaseHitPoint = increaseHitPoint;
+    }
+
+    public int getIncreaseHitPoint() {
+        return increaseHitPoint;
     }
 
     public String toString() {

@@ -11,11 +11,15 @@ public class Weapon extends Artifact {
         increaseAttack = 10 + randomness;
     }
 
-    public String toString() {
-        return "Artifact: Weapon attack: " + this.increaseAttack;
+    public int getIncreaseAttack() {
+        return increaseAttack;
     }
 
-    public int addedAttackPoints() {
-        return this.increaseAttack;
+    public void setIncreaseAttack(int increaseAttack) {
+        this.increaseAttack = increaseAttack;
+    }
+
+    public String toString() {
+        return "Artifact: Weapon attack: " + this.increaseAttack;
     }
 }

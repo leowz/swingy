@@ -12,6 +12,9 @@ public class Point {
     @Size(min = 0, message = "Point.y should be greater than 0")
     private int y;
 
+    public Point() {
+    }
+
     // Constructor
     public Point(int x, int y) {
         this.x = x;

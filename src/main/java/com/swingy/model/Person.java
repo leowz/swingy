@@ -1,7 +1,19 @@
 package com.swingy.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, // Use a name-based identifier for the type
+        include = JsonTypeInfo.As.PROPERTY, // Include the type information as a property in JSON
+        property = "type" // The property name that indicates the type
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Hero.class, name = "hero"),
+        @JsonSubTypes.Type(value = Villain.class, name = "villain")
+})
 
 public class Person {
     @NotNull(message = "Name should not be null")
@@ -28,12 +40,17 @@ public class Person {
     protected int hitPoints;
 
     public Person() {
-        this.name = "";
-        this.level = 1;
-        this.experience = 0;
-        this.attack = 0;
-        this.defense = 0;
-        this.hitPoints = 100;
+    }
+
+    public Person(boolean newPerson) {
+        if (newPerson) {
+            this.name = "";
+            this.level = 1;
+            this.experience = 0;
+            this.attack = 0;
+            this.defense = 0;
+            this.hitPoints = 100;
+        }
     }
 
     public void setName(String newName) {
@@ -44,6 +61,47 @@ public class Person {
         return this.name;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setAttack(int attack) {
+        this.attack = attack;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
+    }
+
+    public int getHitPoints() {
+        return hitPoints;
+    }
+
+    @JsonIgnore
     public boolean isAlive() {
         if (this.hitPoints > 0)
             return true;

@@ -13,8 +13,12 @@ public class Armor extends Artifact {
         increaseDefense = 20 + randomness;
     }
 
-    public int getIncDefense() {
-        return this.increaseDefense;
+    public int getIncreaseDefense() {
+        return increaseDefense;
+    }
+
+    public void setIncreaseDefense(int increaseDefense) {
+        this.increaseDefense = increaseDefense;
     }
 
     public String toString() {

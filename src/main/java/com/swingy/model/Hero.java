@@ -10,8 +10,12 @@ public class Hero extends Person {
     private Armor armor;
     private Helm helm;
 
-    public Hero(HeroClass heroClass) {
+    public Hero() {
         super();
+    }
+
+    public Hero(HeroClass heroClass) {
+        super(true);
         this.heroClass = heroClass;
         if (heroClass == HeroClass.Assassin) {
             this.weapon = new Weapon();
@@ -32,10 +36,42 @@ public class Hero extends Person {
         }
     }
 
+    public void setHeroClass(HeroClass heroClass) {
+        this.heroClass = heroClass;
+    }
+
+    public HeroClass getHeroClass() {
+        return heroClass;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public void setHelm(Helm helm) {
+        this.helm = helm;
+    }
+
+    public Helm getHelm() {
+        return helm;
+    }
+
+    public void setArmor(Armor armor) {
+        this.armor = armor;
+    }
+
+    public Armor getArmor() {
+        return armor;
+    }
+
     public void takeDamage(int damage) {
         int damageAfterDefense = this.getDamageAfrerDefense(damage,
-                this.defense + (this.armor != null ? this.armor.getIncDefense() : 0));
-        int damageAfterHitHelm = damageAfterDefense - (this.helm != null ? this.helm.getIncHp() : 0);
+                this.defense + (this.armor != null ? this.armor.getIncreaseDefense() : 0));
+        int damageAfterHitHelm = damageAfterDefense - (this.helm != null ? this.helm.getIncreaseHitPoint() : 0);
         if (damageAfterHitHelm <= 0) {
             damageAfterHitHelm = 1;
         }
@@ -51,7 +87,7 @@ public class Hero extends Person {
     }
 
     public int makeAttack() {
-        int ad = this.attack + (weapon != null ? weapon.addedAttackPoints() : 0);
+        int ad = this.attack + (weapon != null ? weapon.getIncreaseAttack() : 0);
         System.out.println("Make damage: " + ad);
         return ad;
     }
@@ -112,7 +148,8 @@ public class Hero extends Person {
     }
 
     public String toString() {
-        return String.format("Hero(%s) level(%d) exp(%d) hp(%d) attack(%d) defense(%d) weapon(%s) Armor(%s) Helm(%s)",
+        return String.format("%s(%s) level(%d) exp(%d) hp(%d) attack(%d) defense(%d) weapon(%s) Armor(%s) Helm(%s)",
+                this.heroClass,
                 this.name, this.level, this.experience, this.hitPoints, this.attack, this.defense, this.weapon,
                 this.armor, this.helm);
     }
