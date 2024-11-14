@@ -93,14 +93,7 @@ public class GameController {
     public void saveGame() {
         System.out.println("saving game before exit");
         try {
-
-            // covert Java object to JSON strings
-            String json = om.writeValueAsString(map);
-
-            // output: {"name":"mkyong","age":42}
             System.out.println("serilise Map");
-            System.out.println(json);
-
             om.writeValue(mapFile, map);
             System.out.println("User object saved to user.json");
         } catch (IOException e) {
