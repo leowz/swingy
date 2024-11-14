@@ -1,9 +1,9 @@
 package com.swingy.model;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public class Helm extends Artifact {
-    @NotBlank(message = "attack should not be blank")
+    @PositiveOrZero(message = "attack should not be blank")
     private int increaseHitPoint;
 
     public Helm() {

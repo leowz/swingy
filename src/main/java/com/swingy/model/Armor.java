@@ -1,11 +1,11 @@
 package com.swingy.model;
 
+import org.hibernate.validator.constraints.Range;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 public class Armor extends Artifact {
     @NotBlank(message = "Defense cannot be null")
-    @Size(min = 1, max = 70, message = "Defense should be between 1 and 70")
+    @Range(min = 1, max = 70, message = "Defense should be between 1 and 70")
     private int increaseDefense = 20;
 
     public Armor() {

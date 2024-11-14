@@ -2,7 +2,12 @@ package com.swingy.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import org.hibernate.validator.constraints.Range;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -17,26 +22,27 @@ import jakarta.validation.constraints.Size;
 
 public class Person {
     @NotNull(message = "Name should not be null")
+    @Size(min = 3, max = 10, message = "Name should be between 3 and 10 letters")
     protected String name;
 
     @NotNull(message = "Level should not be null")
-    @Size(min = 1, message = "level should be greater than 0")
+    @Min(value = 1, message = "level should be greater than 0")
     protected int level;
 
     @NotNull(message = "Ex should not be null")
-    @Size(min = 0, message = "level should be greater than 0")
+    @Min(value = 0, message = "level should be greater than 0")
     protected int experience;
 
     @NotNull(message = "Attack should not be null")
-    @Size(min = 0, max = 100, message = "Attack should be greater than 0 and smaller than 100")
+    @Range(min = 0, max = 100, message = "Attack should be greater than 0 and smaller than 100")
     protected int attack;
 
     @NotNull(message = "Defense should not be null")
-    @Size(min = 0, max = 100, message = "Defense should be greater than 0 and smaller than 100")
+    @Range(min = 0, max = 100, message = "Defense should be greater than 0 and smaller than 100")
     protected int defense;
 
     @NotNull(message = "HP should not be null")
-    @Size(min = 0, max = 100, message = "HP should be greater than 0 and smaller than 100")
+    @Range(min = 0, max = 100, message = "HP should be greater than 0 and smaller than 100")
     protected int hitPoints;
 
     public Person() {

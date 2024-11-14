@@ -1,6 +1,7 @@
 package com.swingy.controller;
 
 import java.util.Scanner;
+import java.util.Set;
 import java.io.File;
 import java.io.IOException;
 import java.lang.System;
@@ -13,6 +14,11 @@ import com.swingy.model.HeroClass;
 import com.swingy.model.Move;
 import com.swingy.model.Point;
 import com.swingy.model.Utils;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 public class GameController {
     private GameMap map;
@@ -207,25 +213,42 @@ public class GameController {
     }
 
     public Hero newHeroFromInput() {
+        Hero hero = null;
+        boolean success = false;
         HeroClass[] heroClasses = HeroClass.values();
-        System.out.println("There are " + heroClasses.length + " types of Heros. They are: ");
 
-        for (int i = 0; i < heroClasses.length; i++) {
-            System.out.println((i + 1) + ", " + heroClasses[i]);
+        while (!success) {
+            try {
+                System.out.println("There are " + heroClasses.length + " types of Heros. They are: ");
+                for (int i = 0; i < heroClasses.length; i++) {
+                    System.out.println((i + 1) + ", " + heroClasses[i]);
+                }
+                System.out.println("Please choose the number of your hero.");
+                int index = this.scanner.nextInt() - 1;
+                this.scanner.nextLine(); // Consume the newline character left by nextInt()
+                System.out.println("You have choosen: " + heroClasses[index]);
+                hero = new Hero(heroClasses[index]);
+                System.out.println("Please input a name for your hero.(3-10 letters)");
+                String name = this.scanner.nextLine();
+                hero.setName(name);
+                ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+                Validator validator = factory.getValidator();
+                Set<ConstraintViolation<Hero>> violations = validator.validate(hero);
+                if (!violations.isEmpty()) {
+                    for (ConstraintViolation<Hero> violation : violations) {
+                        throw new Error(violation.getMessage());
+                    }
+                }
+                success = true;
+            } catch (Error e) {
+                String message = e.getMessage();
+                System.out.println("Error in inputing hero info");
+                System.out.println(message);
+                System.out.println("Please put in correct details");
+                success = false;
+            }
         }
-        System.out.println("Please choose the number of your hero.");
-        int index = this.scanner.nextInt() - 1;
-        this.scanner.nextLine(); // Consume the newline character left by nextInt()
-        System.out.println("You have choosen: " + heroClasses[index]);
-        if (index >= 0 && index < heroClasses.length) {
-            Hero hero = new Hero(heroClasses[index]);
-            System.out.println("Please input a name for your hero.");
-            String name = this.scanner.nextLine();
-            hero.setName(name);
-            return hero;
-        } else {
-            throw new IllegalArgumentException("Index out of bounds: " + index);
-        }
+        return hero;
     }
 
     public Move nextMoveInput() {

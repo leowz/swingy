@@ -22,8 +22,11 @@ public class App {
             performCleanup(game);
             System.out.println("Cleanup completed. Application exiting.");
         }));
-        game.start();
-
+        try {
+            game.start();
+        } catch (Error e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     // Cleanup code to execute during shutdown

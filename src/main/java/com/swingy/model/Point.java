@@ -1,15 +1,15 @@
 package com.swingy.model;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 public class Point {
     @NotNull(message = "Point.X should not be null")
-    @Size(min = 0, message = "Point.x should be greater than 0")
+    @Min(value = 0, message = "Point.x should be greater than 0")
     private int x;
 
     @NotNull(message = "Point.y should not be null")
-    @Size(min = 0, message = "Point.y should be greater than 0")
+    @Min(value = 0, message = "Point.y should be greater than 0")
     private int y;
 
     public Point() {
