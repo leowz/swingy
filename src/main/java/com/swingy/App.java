@@ -4,9 +4,8 @@ import com.swingy.controller.GameController;
 
 public class App {
     public static void main(String[] args) {
-
-        // Register a shutdown hook
         GameController game;
+
         if (args.length < 1 || args[0].equals("gui")) {
             System.err.println("gui game");
             game = new GameController(true);
@@ -17,6 +16,7 @@ public class App {
             System.err.println("Argument not recognized.");
             return;
         }
+        // Register a shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Shutdown hook triggered. Cleaning up before exit...");
             performCleanup(game);
@@ -29,11 +29,8 @@ public class App {
         }
     }
 
-    // Cleanup code to execute during shutdown
     private static void performCleanup(GameController game) {
-        // Add any cleanup code here, like saving files, closing resources, etc.
         game.saveGame();
         System.out.println("Performing necessary cleanup...");
-        // e.g., save data to a file, close database connections, etc.
     }
 }
