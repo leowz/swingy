@@ -13,22 +13,9 @@
 # ----- varaibles -----
 
 JC 			= javac
+MV			= mvn
 JRE 		= java
-NAME 		= avaj-launcher
-MAINC		= Main
-J_PATH 		= srcs
-JC_PATH		= classes
-SRS			= sources.txt
-MAIN		= srcs.simulator.Simulator
-
-# ---------------- transformation ------------------ #
-
-JFILES      = $(notdir $(foreach D, $(J_PATH), $(wildcard $(D)/*.java)))
-JCS_NAME	= $(patsubst %.java, %.class, $(JFILES))
-
-# ----- part automatic -----
-SRCS 		= $(addprefix $(C_PATH)/,$(CFILES)) 
-JCS 		= $(addprefix $(JC_PATH)/,$(JCS_NAME))
+NAME 		= swingy.jar
 
 # ----- Colors -----
 BLACK		:="\033[1;30m"
@@ -42,27 +29,20 @@ EOC			:="\033[0;0m"
 
 # ----- part rules -----
 all:
-	@mvn clean package
-	make run
+	@$(MV) clean package
 
 run:
-	@java -jar swingy.jar console
+	@$(JRE) -jar $(NAME) console
 
-build: $(JCS)
+ui:
+	@$(JRE) -jar $(NAME)
 
-
-$(JC_PATH)/%.class:$(J_PATH)/%.java | $(JC_PATH)
-	@printf $(GREEN)"compiling %s\n"$(EOC) $@
-	@$(JC) -d $(JC_PATH) $<
-
-$(JC_PATH):
-	@mkdir $(JC_PATH) 2> /dev/null
+build:
+	@$(MV) package
 
 clean: 
-	@rm -f $(JCS) $(SRS) simulation.txt
-	@find * -name "*.class" -exec rm {} \;
-	@rm -rf $(JC_PATH) 2> /dev/null
-	@printf $(GREEN)"$(NAME) clean\n"$(EOC)
+	@$(MV) clean
+	@rm -rf map.json
 
 re: fclean all
 
