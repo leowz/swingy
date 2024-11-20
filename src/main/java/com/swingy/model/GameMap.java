@@ -122,24 +122,15 @@ public class GameMap {
     }
 
     public Point moveNorth() {
-        int y = this.heroPosition.getY();
-        if (y - 1 < 0)
+        int x = this.heroPosition.getX();
+        if (x - 1 < 0)
             return null;
         else {
-            return new Point(this.heroPosition.getX(), y - 1);
+            return new Point(x - 1, this.heroPosition.getY());
         }
     }
 
     public Point moveSouth() {
-        int y = this.heroPosition.getY();
-        if (y + 1 >= this.size)
-            return null;
-        else {
-            return new Point(this.heroPosition.getX(), y + 1);
-        }
-    }
-
-    public Point moveEast() {
         int x = this.heroPosition.getX();
         if (x + 1 >= this.size)
             return null;
@@ -148,12 +139,21 @@ public class GameMap {
         }
     }
 
-    public Point moveWest() {
-        int x = this.heroPosition.getX();
-        if (x - 1 < 0)
+    public Point moveEast() {
+        int y = this.heroPosition.getY();
+        if (y + 1 >= this.size)
             return null;
         else {
-            return new Point(x - 1, this.heroPosition.getY());
+            return new Point(this.heroPosition.getX(), y + 1);
+        }
+    }
+
+    public Point moveWest() {
+        int y = this.heroPosition.getY();
+        if (y - 1 < 0)
+            return null;
+        else {
+            return new Point(this.heroPosition.getX(), y - 1);
         }
     }
 
@@ -253,9 +253,9 @@ public class GameMap {
         String message = String.format("Map size(%d) with Herso(%s) at position (%d, %d): \n", this.size,
                 this.hero.getName(), heroPosition.getX(), heroPosition.getY());
         message += String.format("!-------------------------------------!\n");
-        for (int y = 0; y < this.size; y++) {
+        for (int x = 0; x < this.size; x++) {
             message += String.format("    ");
-            for (int x = 0; x < this.size; x++) {
+            for (int y = 0; y < this.size; y++) {
                 char c = '.';
                 if (this.map[x][y] instanceof Villain) {
                     c = 'v';

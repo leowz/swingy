@@ -6,7 +6,7 @@
 #    By: zweng <zweng@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/19 12:41:50 by zweng             #+#    #+#              #
-#    Updated: 2024/10/29 17:56:22 by zweng            ###   ########.fr        #
+#    Updated: 2024/11/14 15:40:43 by zweng            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,7 @@ run:
 	@$(JRE) -jar $(NAME) console
 
 ui:
+	@$(MV) clean package
 	@$(JRE) -jar $(NAME)
 
 build:

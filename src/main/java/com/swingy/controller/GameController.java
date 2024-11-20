@@ -21,21 +21,21 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 public class GameController {
-    private GameMap map;
-    private boolean gui;
-    private Scanner scanner;
-    private String mapFileName = "map.json";
-    private ObjectMapper om = new ObjectMapper();
-    private File mapFile = new File(mapFileName);
+    public GameMap map;
+    public Scanner scanner;
+    public String mapFileName = "map.json";
+    public ObjectMapper om = new ObjectMapper();
+    public File mapFile = new File(mapFileName);
 
-    public GameController(boolean gui) {
-        this.gui = gui;
-        if (!this.gui) {
-            scanner = new Scanner(System.in);
-        }
+    public GameController() {
+    }
+
+    public void beforeGameStart() {
+        scanner = new Scanner(System.in);
     }
 
     public void start() {
+        beforeGameStart();
         try {
             System.out.println("game starts");
             if (this.shouldLoadTheGameIfExist()) {
@@ -58,17 +58,11 @@ public class GameController {
     }
 
     public void startNew() {
-        if (this.gui) {
-            this.initGuiNewGame();
-        } else {
-            this.initNewGame();
-        }
+        this.initNewGame();
     }
 
     public void beforeGameExit() {
-        if (this.gui) {
-            this.closeScanner();
-        }
+        this.closeScanner();
     }
 
     public boolean shouldLoadTheGameIfExist() {
