@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.swingy.model.Artifact;
 import com.swingy.model.GameMap;
@@ -98,18 +99,23 @@ public class GuiGameController extends GameController {
         GameView view = (GameView) this.view;
         view.showDecisionModal("You just run into a Villain, would you like to fight or try to escape?", "Fight",
                 "Escape",
-                (Boolean wantEscape) -> {
+                (Boolean wantFight) -> {
                     GameView tempView = (GameView) this.view;
-                    if (wantEscape) {
-                        if (this.couldPlayerEscape()) {
-                            tempView.showMessageModal("Escape Successfully, return to original place!");
-                        } else {
-                            tempView.showMessageModal("Failed to escape, start battle!");
-                        }
+                    Boolean couldEscape = this.couldPlayerEscape();
+                    System.out.println("wantEscape " + wantFight);
+                    System.out.println("couldEscape " + couldEscape);
+                    if (!wantFight && couldEscape) {
+                        tempView.showMessageModal("Escape Successfully, return to original place!", null);
                     } else {
-                        // tempView.showModal("");
-                        System.out.println("Battel started");
-                        this.startBattle(nexPoint);
+                        if (!wantFight && !couldEscape) {
+                            tempView.showMessageModal("Failed to escape, start battle!", (Void) -> {
+                                System.out.println("Battel started");
+                                this.fightBattle(nexPoint);
+                            });
+                        } else {
+                            System.out.println("Battel started");
+                            this.fightBattle(nexPoint);
+                        }
                     }
                 });
 
@@ -118,30 +124,41 @@ public class GuiGameController extends GameController {
     public void moveHero(Point nextPoint) {
         this.map.moveHero(nextPoint);
         this.updateUiFromMap();
-    }
-
-    public void takeDroppedItemOrNot(Artifact droppedItem) {
-        GameView gameView = (GameView) this.view;
-        gameView.showDecisionModal(mapFileName, null, null, (Boolean confirm) -> {
-        });
+        this.roundOnGoing = false;
     }
 
     public void heroDiedGameEnd() {
         System.out.println("Do things after hero dies");
     }
 
-    public void startBattle(Point nextPoint) {
-        Artifact droppedItem = this.map.startBattle(nextPoint);
-        if (this.map.isHeroAlive()) {
-            this.takeDroppedItemOrNot(droppedItem);
-            // if (droppedItem != null && this.isPlayerWantTheDroppedItem(droppedItem)) {
-            // this.map.heroTakeDroppedItem(droppedItem);
-            // }
-            this.moveHero(nextPoint);
-        } else {
-            System.out.println("Hero dead, game end!");
-            this.heroDiedGameEnd();
-        }
+    public void updateFightAnimationAndStats(Consumer<Boolean> onFinish) {
+    }
+
+    public void fightBattle(Point nextPoint) {
+        Artifact droppedItem = this.map.doBattleRound(nextPoint);
+        this.updateFightAnimationAndStats((Boolean fi) -> {
+            if (this.map.isHeroAlive() && this.map.isPersonAlive(nextPoint)) {
+                // fight not over;
+                this.fightBattle(nextPoint);
+            } else if (this.map.isHeroAlive() && !this.map.isPersonAlive(nextPoint)) {
+                // hero wins;
+                if (droppedItem != null) {
+                    GameView gameView = (GameView) this.view;
+                    String msg = "Do you want to take the dropped Item \n" + droppedItem.toString();
+                    gameView.showDecisionModal(msg, null, null, (Boolean confirm) -> {
+                        if (confirm) {
+                            this.map.heroTakeDroppedItem(droppedItem);
+                            gameView.updateStats();
+                        }
+                    });
+                }
+                this.moveHero(nextPoint);
+            } else {
+                // hero deads;
+                System.out.println("Hero dead, game end!");
+                this.heroDiedGameEnd();
+            }
+        });
     }
 
     public void updateUiFromMap() {
@@ -161,20 +178,6 @@ public class GuiGameController extends GameController {
             if (nextPoint != null) {
                 if (this.map.wouldMeetVilain(nextPoint)) {
                     escapeOrFight(nextPoint);
-                    if (this.isPlayerWantEscape() && this.couldPlayerEscape()) {
-                        // go to previous position;
-                        System.out.println("Run back to previous position.");
-                    } else {
-                        Artifact droppedItem = this.map.startBattle(nextPoint);
-                        if (this.map.isHeroAlive()) {
-                            if (droppedItem != null && this.isPlayerWantTheDroppedItem(droppedItem)) {
-                                this.map.heroTakeDroppedItem(droppedItem);
-                            }
-                            this.map.moveHero(nextPoint);
-                        } else {
-                            System.out.println("Hero dead, game end!");
-                        }
-                    }
                 } else {
                     this.moveHero(nextPoint);
                 }
@@ -183,7 +186,6 @@ public class GuiGameController extends GameController {
                 this.initNextGame();
                 this.map.displayHero();
             }
-            this.roundOnGoing = false;
         }
     }
 

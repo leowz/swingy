@@ -100,6 +100,16 @@ public class GameMap {
         return this.hero.isAlive();
     }
 
+    @JsonIgnore
+    public boolean isPersonAlive(Point point) {
+        Person p = (Person) this.map[point.getX()][point.getY()];
+        if (p != null) {
+            return p.isAlive();
+        } else {
+            return false;
+        }
+    }
+
     public void displayHero() {
         System.out.println("hero: ");
         System.out.println(this.hero);
@@ -175,6 +185,18 @@ public class GameMap {
 
     public void showHeroItems() {
         this.hero.showItems();
+    }
+
+    public Artifact doBattleRound(Point villainPoint) {
+        Villain currentVillain = (Villain) this.map[villainPoint.getX()][villainPoint.getY()];
+        if (currentVillain != null) {
+            currentVillain.takeDamage(hero.makeAttack());
+            hero.takeDamage(currentVillain.makeAttack());
+        }
+        if (hero.isAlive() && !currentVillain.isAlive()) {
+            return currentVillain.getItemOwned();
+        }
+        return null;
     }
 
     public Artifact startBattle(Point villainPoint) {

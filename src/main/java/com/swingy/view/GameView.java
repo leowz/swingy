@@ -143,6 +143,10 @@ public class GameView extends MyView {
 
     }
 
+    public void updateStats() {
+        System.out.println("update stats panel");
+    }
+
     public void updateMap() {
         int size = gameMap.getSize(); // Get the size of the map
         mapPanel.removeAll(); // Clear previous components
@@ -171,7 +175,7 @@ public class GameView extends MyView {
         mapPanel.repaint(); // Repaint the panel
     }
 
-    public void showMessageModal(String message) {
+    public void showMessageModal(String message, Consumer<Void> onDismiss) {
         // Create a modal dialog
         msgModalDialog = new JDialog();
         msgModalDialog.setModal(true); // Set the dialog to be modal
@@ -188,6 +192,9 @@ public class GameView extends MyView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dismissMsg(); // Call dismissModal when the button is clicked
+                if (onDismiss != null) {
+                    onDismiss.accept(null);
+                }
             }
         });
         msgModalDialog.add(dismissButton, BorderLayout.SOUTH);
@@ -217,22 +224,28 @@ public class GameView extends MyView {
         yesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onClickEscape.accept(true);
+                if (onClickEscape != null) {
+                    onClickEscape.accept(true);
+                }
                 dismissDecision(); // Call dismissModal when the button is clicked
             }
         });
         noButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onClickEscape.accept(false);
+                if (onClickEscape != null) {
+                    onClickEscape.accept(false);
+                }
                 dismissDecision(); // Call dismissModal when the button is clicked
             }
         });
-        decisionModalDialog.add(yesButton, BorderLayout.SOUTH);
-        decisionModalDialog.add(noButton, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        buttonPanel.add(yesButton, BorderLayout.WEST); // Add yesButton to the left
+        buttonPanel.add(noButton, BorderLayout.EAST); // Add noButton to the right
+        decisionModalDialog.add(buttonPanel, BorderLayout.SOUTH); // Add button panel to the dialog
 
         // Set the size and location of the dialog
-        decisionModalDialog.setSize(400, 250);
+        decisionModalDialog.setSize(500, 250);
         decisionModalDialog.setLocationRelativeTo(this.frame); // Center the dialog relative to the GameView
         decisionModalDialog.setVisible(true); // Show the dialog
     }

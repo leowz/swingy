@@ -116,10 +116,10 @@ public class GameController {
     public boolean couldPlayerEscape() {
         int chance = Utils.getRandomNumber(0, 100);
         if (chance > 50) {
-            System.out.println("Escap successfully!");
+            System.out.println("Escape successfully!");
             return true;
         } else {
-            System.out.println("Escap failed, you have to fight the battle!");
+            System.out.println("Escape failed, you have to fight the battle!");
             return false;
         }
     }
