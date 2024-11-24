@@ -14,8 +14,10 @@ import com.swingy.model.HeroClass;
 import java.awt.Font; // Add this import
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Color; // Add this import
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener; // Add this import
 import java.awt.event.FocusEvent;
@@ -172,20 +174,29 @@ public class StartingView extends MyView {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
         if (msgs != null && msgs.length > 0) {
+            gbc.insets = new Insets(10, 0, 10, 0);
             newPanel.add(warningLabel, gbc);
             gbc.gridy++;
         }
+        gbc.insets = new Insets(10, 0, 10, 0);
         newPanel.add(heroTypeLabel, gbc);
         gbc.gridy++;
-        for (int i = 0; i < buttons.length; i++) {
-            newPanel.add(buttons[i], gbc);
-            gbc.gridy++;
-        }
+        gbc.insets = new Insets(10, 0, 10, 0);
         newPanel.add(heroNameField, gbc);
         gbc.gridy++;
+        JPanel buttonsPanel = new JPanel(new FlowLayout()); // Use FlowLayout instead of GridBagLayout
+        for (int i = 0; i < buttons.length; i++) {
+            buttonsPanel.add(buttons[i], gbc);
+        }
+        gbc.insets = new Insets(10, 0, 10, 0);
+        newPanel.add(buttonsPanel, gbc);
+        gbc.gridy++;
+        gbc.insets = new Insets(10, 0, 10, 0);
         newPanel.add(confirmButton, gbc);
         gbc.gridy++;
+        gbc.insets = new Insets(10, 0, 10, 0);
         newPanel.add(displayLabel, gbc);
 
         frame.add(newPanel, BorderLayout.CENTER);

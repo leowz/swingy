@@ -194,6 +194,7 @@ public class GameMap {
             hero.takeDamage(currentVillain.makeAttack());
         }
         if (hero.isAlive() && !currentVillain.isAlive()) {
+            hero.gainExperience(currentVillain.experience);
             return currentVillain.getItemOwned();
         }
         return null;

@@ -43,9 +43,11 @@ public class GuiGameController extends GameController {
             this.view.getFrame().dispose(); // Close the StartingView
         }
         // Create and show the HeroCreationView
+        this.roundOnGoing = false;
         GameView gameView = new GameView();
         gameView.initMap(this.map);
         gameView.initAction((Move move) -> {
+            System.out.println("Move: " + move);
             executeRound(move);
         }, (Boolean confirm) -> {
             System.out.println("Confirm to be  " + confirm);
@@ -97,13 +99,11 @@ public class GuiGameController extends GameController {
 
     public void escapeOrFight(Point nexPoint) {
         GameView view = (GameView) this.view;
-        view.showDecisionModal("You just run into a Villain, would you like to fight or try to escape?", "Fight",
+        view.showDecisionModal("You just run into a Villain, would you like to fight or try to escape?", null, "Fight",
                 "Escape",
                 (Boolean wantFight) -> {
                     GameView tempView = (GameView) this.view;
                     Boolean couldEscape = this.couldPlayerEscape();
-                    System.out.println("wantEscape " + wantFight);
-                    System.out.println("couldEscape " + couldEscape);
                     if (!wantFight && couldEscape) {
                         tempView.showMessageModal("Escape Successfully, return to original place!", null);
                     } else {
@@ -132,6 +132,8 @@ public class GuiGameController extends GameController {
     }
 
     public void updateFightAnimationAndStats(Consumer<Boolean> onFinish) {
+        System.out.println("animation updates");
+        onFinish.accept(true);
     }
 
     public void fightBattle(Point nextPoint) {
@@ -139,24 +141,33 @@ public class GuiGameController extends GameController {
         this.updateFightAnimationAndStats((Boolean fi) -> {
             if (this.map.isHeroAlive() && this.map.isPersonAlive(nextPoint)) {
                 // fight not over;
+                System.out.println("continue fight");
                 this.fightBattle(nextPoint);
             } else if (this.map.isHeroAlive() && !this.map.isPersonAlive(nextPoint)) {
                 // hero wins;
+                System.out.println("hero wins");
                 if (droppedItem != null) {
                     GameView gameView = (GameView) this.view;
-                    String msg = "Do you want to take the dropped Item \n" + droppedItem.toString();
-                    gameView.showDecisionModal(msg, null, null, (Boolean confirm) -> {
-                        if (confirm) {
-                            this.map.heroTakeDroppedItem(droppedItem);
-                            gameView.updateStats();
-                        }
+                    gameView.showMessageModal("Your Hero wins!", (Void) -> {
+                        this.map.displayHero();
+                        String msg = "Do you want to take the dropped Item \n" + droppedItem.toString();
+                        gameView.showDecisionModal(msg, "info", null, null, (Boolean confirm) -> {
+                            if (confirm) {
+                                this.map.heroTakeDroppedItem(droppedItem);
+                                gameView.updateStats();
+                            }
+                        });
+
                     });
                 }
                 this.moveHero(nextPoint);
             } else {
                 // hero deads;
-                System.out.println("Hero dead, game end!");
-                this.heroDiedGameEnd();
+                GameView gameView = (GameView) this.view;
+                gameView.showMessageModal("Your Hero Deads. Game Over", (Void) -> {
+                    System.out.println("Hero dead, game end!");
+                    this.heroDiedGameEnd();
+                });
             }
         });
     }
@@ -169,6 +180,7 @@ public class GuiGameController extends GameController {
     public void executeRound(Move move) {
         System.out.println("Your next move is : " + move);
         if (roundOnGoing) {
+            System.out.println("round OnGoing");
             return;
         } else {
             this.roundOnGoing = true;
@@ -183,8 +195,11 @@ public class GuiGameController extends GameController {
                 }
             } else {
                 System.out.println("Your Hero wins!!! now go to next game!");
-                this.initNextGame();
-                this.map.displayHero();
+                GameView gameView = (GameView) this.view;
+                gameView.showMessageModal("Your Hero wins this round, now move to next round.", (Void) -> {
+                    this.initNextGame();
+                    startGamingLoop();
+                });
             }
         }
     }

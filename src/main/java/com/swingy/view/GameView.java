@@ -205,11 +205,13 @@ public class GameView extends MyView {
         msgModalDialog.setVisible(true); // Show the dialog
     }
 
-    public void showDecisionModal(String message, String titleYes, String titleNo, Consumer<Boolean> onClickEscape) {
+    public void showDecisionModal(String message, String title, String titleYes, String titleNo,
+            Consumer<Boolean> onClickEscape) {
         // Create a modal dialog
         decisionModalDialog = new JDialog();
         decisionModalDialog.setModal(true); // Set the dialog to be modal
-        decisionModalDialog.setTitle("Warning!");
+        String modalTitle = title == null ? title : "Warning!";
+        decisionModalDialog.setTitle(modalTitle);
 
         // Create a label to display the message
         JLabel messageLabel = new JLabel(message);
@@ -224,19 +226,19 @@ public class GameView extends MyView {
         yesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                dismissDecision(); // Call dismissModal when the button is clicked
                 if (onClickEscape != null) {
                     onClickEscape.accept(true);
                 }
-                dismissDecision(); // Call dismissModal when the button is clicked
             }
         });
         noButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                dismissDecision(); // Call dismissModal when the button is clicked
                 if (onClickEscape != null) {
                     onClickEscape.accept(false);
                 }
-                dismissDecision(); // Call dismissModal when the button is clicked
             }
         });
         JPanel buttonPanel = new JPanel(new BorderLayout());
