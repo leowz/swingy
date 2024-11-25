@@ -20,6 +20,6 @@ public class Weapon extends Artifact {
     }
 
     public String toString() {
-        return "Artifact: Weapon attack: " + this.increaseAttack;
+        return "Weapon attack: " + this.increaseAttack;
     }
 }

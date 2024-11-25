@@ -142,7 +142,7 @@ public class Hero extends Person {
         if (this.level < nextLevel) {
             System.out.println("Hero promot from level: " + this.level + " to level: " + nextLevel);
             System.out.println("Hero regain 30 hp due to the level up!");
-            this.upgradeStats(30, 2, 1);
+            this.upgradeStats(5, 2, 1);
             this.level = nextLevel;
         }
     }

@@ -108,13 +108,13 @@ public class StartingView extends MyView {
         Hero[] heroes = savedHeros; // Replace with your method to fetch heroes
 
         for (Hero hero : heroes) {
-            JButton heroButton = new JButton(hero.getName()); // Create button for each hero
-            // Optionally, set an icon if you have images
-            // heroButton.setIcon(new ImageIcon(hero.getImagePath())); // Uncomment if you
-            // have images
-
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.add(new PersonView(hero, true));
+            JButton heroButton = new JButton("Select"); // Create button for each hero
             heroButton.addActionListener(e -> onSelect.accept(hero)); // Set action listener for selection
-            heroPanel.add(heroButton); // Add hero button to the panel
+            panel.add(heroButton); // Add hero button to the panel
+            heroPanel.add(panel);
         }
 
         // Create a scroll pane for horizontal scrolling

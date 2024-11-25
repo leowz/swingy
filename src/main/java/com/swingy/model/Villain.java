@@ -2,12 +2,6 @@ package com.swingy.model;
 
 import jakarta.validation.constraints.NotNull;
 
-enum VillainClass {
-    normal,
-    elite,
-    boss,
-}
-
 public class Villain extends Person {
     @NotNull(message = "Villain Class should not be null")
     private VillainClass villainClass;

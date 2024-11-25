@@ -3,6 +3,7 @@ package com.swingy.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener; // Add this import
@@ -16,11 +17,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.swingy.model.GameMap;
+import com.swingy.model.Hero;
 import com.swingy.model.Move;
 import com.swingy.model.Person;
+import com.swingy.model.Villain;
 
 public class GameView extends MyView {
     private JPanel mapPanel;
+    private JPanel heroPanel;
+    private PersonView heroView;
+    private JPanel villainPanel;
+    private PersonView villainView;
     private JPanel controlPanel;
     private JPanel navPanel;
     private JButton upButton;
@@ -49,6 +56,8 @@ public class GameView extends MyView {
 
         // Create navigation buttons
         navPanel = new JPanel(new GridLayout(3, 3)); // 3 rows, 1 column
+        heroPanel = new JPanel(new FlowLayout());
+        villainPanel = new JPanel(new FlowLayout());
         upButton = new JButton("Up");
         downButton = new JButton("Down");
         leftButton = new JButton("Left");
@@ -86,15 +95,53 @@ public class GameView extends MyView {
 
         // Add navigation and action panels to control panel
         controlPanel.add(navPanel);
+        controlPanel.add(heroPanel);
+        controlPanel.add(villainPanel);
 
         // Add control panel to the bottom
         frame.add(controlPanel, BorderLayout.SOUTH);
         frame.setVisible(true);
     }
 
+    public void initHeroStat() {
+        heroView = new PersonView(gameMap.getHero(), true);
+        heroPanel.add(heroView);
+    }
+
+    public void initVillainStat(Villain villain) {
+        villainView = new PersonView(villain, true);
+        villainPanel.add(villainView);
+        villainPanel.revalidate();
+        villainPanel.repaint();
+    }
+
+    public void updateStats(Hero hero, Villain villain) {
+        System.out.println("update stats panel");
+        if (hero != null) {
+            System.out.println("update Hero: " + hero);
+            heroView.updateHero(hero);
+            heroView.revalidate();
+            heroView.repaint();
+        }
+        if (villain != null) {
+            villainView.updateVillain(villain);
+            villainPanel.revalidate();
+            villainPanel.repaint();
+        }
+    }
+
+    public void removeVillainStat() {
+        if (villainPanel != null) {
+            villainPanel.removeAll();
+            villainPanel.revalidate();
+            villainPanel.repaint();
+        }
+    }
+
     public void initMap(GameMap map) {
         gameMap = map; // Store the GameMap instance
         updateMap();
+        initHeroStat();
     }
 
     public void initAction(Consumer<Move> onClickDirection) {
@@ -114,10 +161,6 @@ public class GameView extends MyView {
         }
     }
 
-    public void updateStats() {
-        System.out.println("update stats panel");
-    }
-
     public void updateMap() {
         int size = gameMap.getSize(); // Get the size of the map
         mapPanel.removeAll(); // Clear previous components
@@ -129,11 +172,14 @@ public class GameView extends MyView {
                 Person person = gameMap.getMap()[i][j]; // Get the Person at the current position
                 GridCell cell = new GridCell(); // Create a new GridCell
 
-                // Set the content of the cell
                 if (person != null) {
-                    JLabel label = new JLabel(person.toString().substring(0, 3)); // Display the Person's string
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    cell.setContent(label); // Set the label as the content of the cell
+                    if (person instanceof Hero) {
+                        PersonView content = new PersonView((Hero) person, false);
+                        cell.setContent(content); // Set the label as the content of the cell
+                    } else if (person instanceof Villain) {
+                        PersonView content = new PersonView((Villain) person, false);
+                        cell.setContent(content); // Set the label as the content of the cell
+                    }
                 } else {
                     cell.setContent(new JLabel()); // Empty cell
                 }

@@ -200,6 +200,21 @@ public class GameMap {
         return null;
     }
 
+    public Person getPersonByPoint(Point point) {
+        if (point != null) {
+            return this.map[point.getX()][point.getY()];
+        }
+        return null;
+    }
+
+    public Villain getVillainByPoint(Point point) {
+        Person ret = this.getPersonByPoint(point);
+        if (ret instanceof Villain) {
+            return (Villain) ret;
+        }
+        return null;
+    }
+
     public Artifact startBattle(Point villainPoint) {
         Villain currentVillain = (Villain) this.map[villainPoint.getX()][villainPoint.getY()];
         int roundCounter = 0;

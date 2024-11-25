@@ -12,6 +12,7 @@ import com.swingy.model.GameMap;
 import com.swingy.model.Hero;
 import com.swingy.model.Move;
 import com.swingy.model.Point;
+import com.swingy.model.Villain;
 import com.swingy.view.GameView;
 import com.swingy.view.MyView;
 import com.swingy.view.StartingView;
@@ -94,9 +95,6 @@ public class GuiGameController extends GameController {
         beforeGameStart();
         try {
             System.out.println("game starts");
-            // while (!this.isGameEnded()) {
-            // this.executeRound();
-            // }
         } catch (Error error) {
             beforeGameExit();
             throw error;
@@ -106,13 +104,19 @@ public class GuiGameController extends GameController {
 
     public void escapeOrFight(Point nexPoint) {
         GameView view = (GameView) this.view;
+        Villain v = (Villain) this.map.getPersonByPoint(nexPoint);
+
+        view.initVillainStat(v);
         view.showDecisionModal("You just run into a Villain, would you like to fight or try to escape?", null, "Fight",
                 "Escape",
                 (Boolean wantFight) -> {
                     GameView tempView = (GameView) this.view;
                     Boolean couldEscape = this.couldPlayerEscape();
                     if (!wantFight && couldEscape) {
-                        tempView.showMessageModal("Escape Successfully, return to original place!", null);
+                        tempView.showMessageModal("Escape Successfully, return to original place!", (Void) -> {
+                            this.roundOnGoing = false;
+                            view.removeVillainStat();
+                        });
                     } else {
                         if (!wantFight && !couldEscape) {
                             tempView.showMessageModal("Failed to escape, start battle!", (Void) -> {
@@ -125,7 +129,6 @@ public class GuiGameController extends GameController {
                         }
                     }
                 });
-
     }
 
     public void moveHero(Point nextPoint) {
@@ -144,6 +147,8 @@ public class GuiGameController extends GameController {
     }
 
     public void fightBattle(Point nextPoint) {
+        GameView gameView = (GameView) this.view;
+
         Artifact droppedItem = this.map.doBattleRound(nextPoint);
         this.updateFightAnimationAndStats((Boolean fi) -> {
             if (this.map.isHeroAlive() && this.map.isPersonAlive(nextPoint)) {
@@ -153,16 +158,17 @@ public class GuiGameController extends GameController {
             } else if (this.map.isHeroAlive() && !this.map.isPersonAlive(nextPoint)) {
                 // hero wins;
                 System.out.println("hero wins");
+                gameView.updateStats(this.map.getHero(), this.map.getVillainByPoint(nextPoint));
                 if (droppedItem != null) {
-                    GameView gameView = (GameView) this.view;
                     gameView.showMessageModal("Your Hero wins!", (Void) -> {
                         this.map.displayHero();
                         String msg = "Do you want to take the dropped Item \n" + droppedItem.toString();
                         gameView.showDecisionModal(msg, "info", null, null, (Boolean confirm) -> {
+                            gameView.removeVillainStat();
                             if (confirm) {
                                 this.map.heroTakeDroppedItem(droppedItem);
-                                gameView.updateStats();
                             }
+                            gameView.updateStats(this.map.getHero(), null);
                         });
 
                     });
@@ -170,7 +176,6 @@ public class GuiGameController extends GameController {
                 this.moveHero(nextPoint);
             } else {
                 // hero deads;
-                GameView gameView = (GameView) this.view;
                 gameView.showMessageModal("Your Hero Deads. Game Over", (Void) -> {
                     System.out.println("Hero dead, game end!");
                     this.heroDiedGameEnd();
