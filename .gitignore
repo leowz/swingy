@@ -1,5 +1,5 @@
 .vscode
 target/
 swingy.jar
-map.json
 test/
+*.json

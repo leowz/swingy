@@ -43,7 +43,7 @@ public class App {
     }
 
     private static void performCleanup(GameController controller) {
-        controller.saveGame();
+        controller.saveHeros();
         System.out.println("Performing necessary cleanup...");
     }
 }

@@ -49,9 +49,6 @@ public class GuiGameController extends GameController {
         gameView.initAction((Move move) -> {
             System.out.println("Move: " + move);
             executeRound(move);
-        }, (Boolean confirm) -> {
-            System.out.println("Confirm to be  " + confirm);
-
         });
         this.view = gameView;
     }
@@ -59,20 +56,30 @@ public class GuiGameController extends GameController {
     public void beforeGameExit() {
     }
 
-    public void loadOrStartNewGame() {
+    public void showLoadHero() {
         StartingView view = (StartingView) this.view;
+        view.setLoadHeroView(this.savedHeros, (Hero hero) -> {
+            this.map = new GameMap(hero);
+            this.startGamingLoop();
+        }, (Void) -> {
+            this.loadOrStartNewHero();
+        });
+    }
 
-        view.setCouldLoadGameView(this.couldLoadGame(),
+    public void loadOrStartNewHero() {
+        StartingView view = (StartingView) this.view;
+        loadHero();
+        view.setCouldLoadHeroView(this.couldLoadHeros(),
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("Load Game action executed.");
-                        loadGame();
+                        System.out.println("Load Existing Hero");
+                        showLoadHero();
                     }
                 }, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("New Game action executed.");
+                        System.out.println("New Hero");
                         initNewGame(null);
                     }
                 });
@@ -80,7 +87,7 @@ public class GuiGameController extends GameController {
 
     @Override
     public void start() {
-        loadOrStartNewGame();
+        loadOrStartNewHero();
     }
 
     public void startGamingLoop() {
@@ -220,6 +227,7 @@ public class GuiGameController extends GameController {
                 }
                 this.initNewGame(messages.toArray(new String[0]));
             } else {
+                saveHero(hero);
                 this.map = new GameMap(hero);
                 this.startGamingLoop();
             }

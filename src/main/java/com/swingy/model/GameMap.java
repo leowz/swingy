@@ -210,7 +210,7 @@ public class GameMap {
             try {
                 while (currentVillain.isAlive() && hero.isAlive()) {
                     // hero attack
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                     roundCounter++;
                     System.out.println("!-----------------Round(" + roundCounter + ") Start-----------------!");
                     System.out.println("Hero Attack Villain: ");
@@ -230,7 +230,7 @@ public class GameMap {
                     hero.takeDamage(currentVillain.makeAttack());
                     System.out.println("!-----------------Round(" + roundCounter + ") End-----------------!");
                     System.err.println("");
-                    Thread.sleep(3000);
+                    Thread.sleep(500);
                     System.err.println("");
                 }
                 if (hero.isAlive()) {

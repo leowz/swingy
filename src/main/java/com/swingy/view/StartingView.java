@@ -2,13 +2,16 @@ package com.swingy.view;
 
 import java.awt.BorderLayout;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import com.swingy.model.Hero;
 import com.swingy.model.HeroClass;
 
 import java.awt.Font; // Add this import
@@ -23,6 +26,7 @@ import java.awt.event.ActionListener; // Add this import
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusAdapter;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class StartingView extends MyView {
     private JTextField taskField;
@@ -35,15 +39,6 @@ public class StartingView extends MyView {
 
     public StartingView() {
         super();
-        frame.setLayout(new BorderLayout());
-        taskLabel = new JLabel("Welcom to the Hero Game!!!"); // Initialize JLabel
-        taskLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Set font size and style
-        taskLabel.setForeground(Color.RED); // Set text color
-        taskLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center the text
-        // Input panel
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(taskLabel, BorderLayout.CENTER);
-        frame.add(panel, BorderLayout.CENTER);
         frame.setVisible(true);
     }
 
@@ -63,11 +58,26 @@ public class StartingView extends MyView {
         return taskList;
     }
 
-    public void setCouldLoadGameView(Boolean couldLoadGame, ActionListener loadGameAction,
+    public void setCouldLoadHeroView(Boolean couldLoadGame, ActionListener loadGameAction,
             ActionListener newGameAction) {
+        frame.getContentPane().removeAll(); // Remove all components from the frame
         // Create buttons
-        JButton loadGameButton = new JButton("Load Game");
-        JButton newGameButton = new JButton("New Game");
+        taskLabel = new JLabel("Welcom to the Hero Game!!!"); // Initialize JLabel
+        taskLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Set font size and style
+        taskLabel.setForeground(Color.RED); // Set text color
+        taskLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center the text
+        // Input panel
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; // Column 0
+        gbc.gridy = 0; // Row 0
+        gbc.anchor = GridBagConstraints.CENTER; // Center the label and buttons
+        panel.add(taskLabel, gbc);
+        gbc.gridy++;
+        frame.add(panel, BorderLayout.CENTER);
+
+        JButton loadGameButton = new JButton("Load Hero");
+        JButton newGameButton = new JButton("New Hero");
 
         // Set action listener for Load Game button from caller
         loadGameButton.addActionListener(loadGameAction);
@@ -75,25 +85,59 @@ public class StartingView extends MyView {
         // Set action listener for New Game button from caller
         newGameButton.addActionListener(newGameAction);
 
-        // Get the existing panel and set its layout to GridBagLayout
-        JPanel panel = (JPanel) frame.getContentPane().getComponent(0); // Get the existing panel
-        panel.setLayout(new GridBagLayout()); // Set GridBagLayout for centering
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; // Column 0
-        gbc.gridy = 0; // Row 0
-        gbc.anchor = GridBagConstraints.CENTER; // Center the label and buttons
-        panel.add(taskLabel, gbc); // Assuming taskLabel is your existing label
-
-        gbc.gridy = 1; // Move to the next row for buttons
+        gbc.gridy++; // Move to the next row for buttons
         panel.add(newGameButton, gbc); // Add New Game button
-        gbc.gridy = 2; // Move to the next row for the next button
+        gbc.gridy++; // Move to the next row for the next button
         if (couldLoadGame) {
             panel.add(loadGameButton, gbc); // Add Load Game button
         }
 
         panel.revalidate(); // Refresh the panel to show new components
         panel.repaint(); // Repaint the panel
+    }
+
+    public void setLoadHeroView(Hero[] savedHeros, Consumer<Hero> onSelect, Consumer<Void> onBack) {
+        // Clear existing components
+        frame.getContentPane().removeAll(); // Remove all components from the frame
+
+        // Create a panel for the hero selection
+        JPanel heroPanel = new JPanel();
+        heroPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // Center alignment with spacing
+
+        // Assuming you have a method to get the list of heroes
+        Hero[] heroes = savedHeros; // Replace with your method to fetch heroes
+
+        for (Hero hero : heroes) {
+            JButton heroButton = new JButton(hero.getName()); // Create button for each hero
+            // Optionally, set an icon if you have images
+            // heroButton.setIcon(new ImageIcon(hero.getImagePath())); // Uncomment if you
+            // have images
+
+            heroButton.addActionListener(e -> onSelect.accept(hero)); // Set action listener for selection
+            heroPanel.add(heroButton); // Add hero button to the panel
+        }
+
+        // Create a scroll pane for horizontal scrolling
+        JScrollPane scrollPane = new JScrollPane(heroPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(400, 100)); // Set preferred size for the scroll pane
+
+        // Create a panel for the back button to center it
+        JPanel backButtonPanel = new JPanel();
+        backButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Center alignment
+        JButton backButton = new JButton("Go Back");
+        backButton.addActionListener(e -> onBack.accept(null)); // Set action listener for back button
+        backButtonPanel.add(backButton); // Add back button to the panel
+
+        // Create a main panel to hold the scroll pane and back button
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); // Vertical layout
+        mainPanel.add(scrollPane); // Add scroll pane to main panel
+        mainPanel.add(backButtonPanel); // Add back button panel to main panel
+
+        frame.add(mainPanel, BorderLayout.CENTER); // Add main panel to the frame
+        frame.revalidate(); // Refresh the frame to show new components
+        frame.repaint(); // Repaint the frame
     }
 
     public void setCreatHeroView(String[] msgs, BiConsumer<HeroClass, String> onConfirm) {

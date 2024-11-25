@@ -6,10 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener; // Add this import
-import java.awt.event.FocusEvent;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.awt.event.FocusAdapter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,13 +23,10 @@ public class GameView extends MyView {
     private JPanel mapPanel;
     private JPanel controlPanel;
     private JPanel navPanel;
-    private JPanel actionPanel;
     private JButton upButton;
     private JButton downButton;
     private JButton leftButton;
     private JButton rightButton;
-    private JButton yesButton;
-    private JButton noButton;
     private GameMap gameMap;
     private JDialog msgModalDialog;
     private JDialog decisionModalDialog;
@@ -90,16 +84,8 @@ public class GameView extends MyView {
         navPanel.add(downButton); // Down button
         navPanel.add(emptyButton5); // Empty space
 
-        // Create action buttons
-        actionPanel = new JPanel(new GridLayout(1, 2)); // 1 row, 2 columns
-        yesButton = new JButton("Yes");
-        noButton = new JButton("No");
-        actionPanel.add(yesButton);
-        actionPanel.add(noButton);
-
         // Add navigation and action panels to control panel
         controlPanel.add(navPanel);
-        controlPanel.add(actionPanel);
 
         // Add control panel to the bottom
         frame.add(controlPanel, BorderLayout.SOUTH);
@@ -111,7 +97,7 @@ public class GameView extends MyView {
         updateMap();
     }
 
-    public void initAction(Consumer<Move> onClickDirection, Consumer<Boolean> onClickConfirm) {
+    public void initAction(Consumer<Move> onClickDirection) {
         // Create an array of corresponding Move enum values
         Move[] moves = { Move.North, Move.West, Move.South, Move.East };
         JButton[] directionButtons = new JButton[] { upButton, leftButton, downButton, rightButton };
@@ -126,21 +112,6 @@ public class GameView extends MyView {
                 }
             });
         }
-
-        Boolean[] confirms = { true, false };
-        JButton[] confirmButtons = new JButton[] { yesButton, noButton, };
-        for (int i = 0; i < confirms.length; i++) {
-            final Boolean confirm = confirms[i]; // Capture the current move in a final variable
-            confirmButtons[i].addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    onClickConfirm.accept(confirm);
-                }
-
-            });
-        }
-
     }
 
     public void updateStats() {

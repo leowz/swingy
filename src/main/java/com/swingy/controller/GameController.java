@@ -5,6 +5,7 @@ import java.util.Set;
 import java.io.File;
 import java.io.IOException;
 import java.lang.System;
+import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swingy.model.Artifact;
@@ -23,9 +24,10 @@ import jakarta.validation.ValidatorFactory;
 public class GameController {
     public GameMap map;
     public Scanner scanner;
-    public String mapFileName = "map.json";
+    public String heroFileName = "heros.json";
     public ObjectMapper om = new ObjectMapper();
-    public File mapFile = new File(mapFileName);
+    public File herosFile = new File(heroFileName);
+    public Hero[] savedHeros;
 
     public GameController() {
     }
@@ -38,9 +40,11 @@ public class GameController {
         beforeGameStart();
         try {
             System.out.println("game starts");
-            if (this.shouldLoadTheGameIfExist()) {
+            if (this.shouldLoadHerosIfExist()) {
                 System.out.println("load game");
-                this.loadGame();
+                this.loadHero();
+                Hero hero = this.userPickHero();
+                this.map = new GameMap(hero);
             } else {
                 System.out.println("start new game");
                 this.startNew();
@@ -58,6 +62,7 @@ public class GameController {
     }
 
     public void startNew() {
+        this.loadHero();
         this.initNewGame();
     }
 
@@ -65,10 +70,10 @@ public class GameController {
         this.closeScanner();
     }
 
-    public boolean shouldLoadTheGameIfExist() {
-        if (this.couldLoadGame()) {
-            System.out.println("1. Start New Game");
-            System.out.println("2. Load Saved Game");
+    public boolean shouldLoadHerosIfExist() {
+        if (this.couldLoadHeros()) {
+            System.out.println("1. Start New Hero");
+            System.out.println("2. Load Saved Hero");
             System.out.println("Please input the number of your decision");
             int decision = this.scanner.nextInt();
             if (decision == 2)
@@ -78,24 +83,50 @@ public class GameController {
         return false;
     }
 
-    public void loadGame() {
-        if (mapFile.exists()) {
+    public void loadHero() {
+        if (herosFile.exists()) {
             try {
-                GameMap loadedMap = om.readValue(mapFile, GameMap.class);
-                this.map = loadedMap;
-                mapFile.delete();
+                Hero[] heros = om.readValue(herosFile, Hero[].class);
+                this.savedHeros = heros;
             } catch (IOException e) {
                 e.printStackTrace();
+                System.out.println(e);
+                System.out.println("Please input a correct hero number!");
             }
         }
     }
 
-    public void saveGame() {
+    public Hero userPickHero() {
+        Hero ret = null;
+        while (ret == null) {
+            try {
+                Hero[] heros = this.savedHeros;
+                System.out.println("Existing Heros below: ");
+                for (int i = 0; i < heros.length; i++) {
+                    System.out.println(i + ": \n" + heros[i]);
+                }
+                System.out.println("Please input the number of hero you want to select");
+                int decision = this.scanner.nextInt();
+                ret = heros[decision];
+            } catch (Error e) {
+                e.printStackTrace();
+                System.out.println(e);
+                System.out.println("Please input a correct hero number!");
+            }
+        }
+        return ret;
+    }
+
+    public void saveHeros() {
         System.out.println("saving game before exit");
         try {
             System.out.println("serilise Map");
-            om.writeValue(mapFile, map);
-            System.out.println("User object saved to user.json");
+            if (savedHeros != null && savedHeros.length > 0) {
+                Hero[] liveHeros = Arrays.stream(savedHeros).filter(hero -> hero.getHitPoints() > 0)
+                        .toArray(Hero[]::new);
+                om.writeValue(herosFile, liveHeros);
+            }
+            System.out.println("User object saved to heros.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -184,8 +215,17 @@ public class GameController {
         }
     }
 
-    public boolean couldLoadGame() {
-        return mapFile.exists();
+    public boolean couldLoadHeros() {
+        if (herosFile.exists()) {
+            try {
+                Hero[] heros = om.readValue(herosFile, Hero[].class);
+                return heros.length > 0;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
     }
 
     public boolean isGameEnded() {
@@ -262,9 +302,23 @@ public class GameController {
         }
     }
 
+    public void saveHero(Hero hero) {
+        if (hero != null) {
+            if (this.savedHeros == null) {
+                System.out.println("savedHeros == null");
+                this.savedHeros = new Hero[] { hero };
+            } else {
+                System.out.println("savedHeros != null");
+                this.savedHeros = Arrays.copyOf(this.savedHeros, this.savedHeros.length + 1);
+                this.savedHeros[this.savedHeros.length - 1] = hero;
+            }
+        }
+    }
+
     public void initNewGame() {
         startingText();
         Hero hero = newHeroFromInput();
+        saveHero(hero);
         System.err.println("hero get: " + hero);
         this.map = new GameMap(hero);
     }

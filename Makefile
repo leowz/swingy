@@ -6,7 +6,7 @@
 #    By: zweng <zweng@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/19 12:41:50 by zweng             #+#    #+#              #
-#    Updated: 2024/11/14 15:40:43 by zweng            ###   ########.fr        #
+#    Updated: 2024/11/24 18:25:23 by zweng            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,8 @@ EOC			:="\033[0;0m"
 
 # ----- part rules -----
 all:
-	@$(MV) clean package
+	@make build
+	@make run
 
 run:
 	@$(JRE) -jar $(NAME) console
@@ -39,7 +40,7 @@ ui:
 	@$(JRE) -jar $(NAME)
 
 build:
-	@$(MV) package
+	@$(MV) clean package
 
 clean: 
 	@$(MV) clean
