@@ -288,7 +288,7 @@ public class GameMap {
     }
 
     public String toString() {
-        String message = String.format("Map size(%d) with Herso(%s) at position (%d, %d): \n", this.size,
+        String message = String.format("Map(size %d) with Hero(%s) at position (%d, %d): \n", this.size,
                 this.hero.getName(), heroPosition.getX(), heroPosition.getY());
         message += String.format("!-------------------------------------!\n");
         for (int x = 0; x < this.size; x++) {
@@ -297,6 +297,17 @@ public class GameMap {
                 char c = '.';
                 if (this.map[x][y] instanceof Villain) {
                     c = 'v';
+                    Villain v = (Villain) this.map[x][y];
+                    switch (v.getVillainClass()) {
+                        case elite:
+                            c = 'E';
+                            break;
+                        case boss:
+                            c = 'B';
+                            break;
+                        default:
+                            break;
+                    }
                 } else if (this.map[x][y] instanceof Hero) {
                     c = 'h';
                 }

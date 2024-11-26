@@ -37,7 +37,7 @@ public class App {
             } else {
                 controller.start();
             }
-        } catch (Error e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

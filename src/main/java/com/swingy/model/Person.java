@@ -128,7 +128,6 @@ public class Person {
         System.out.println("Take damage: " + damageAfterDefense);
         this.hitPoints = this.hitPoints - damageAfterDefense;
         if (this.hitPoints < 0) {
-            System.out.println(this.name + " is dead");
             this.hitPoints = 0;
         }
     }

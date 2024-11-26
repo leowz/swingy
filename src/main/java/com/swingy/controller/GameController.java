@@ -41,12 +41,10 @@ public class GameController {
         try {
             System.out.println("game starts");
             if (this.shouldLoadHerosIfExist()) {
-                System.out.println("load game");
                 this.loadHero();
                 Hero hero = this.userPickHero();
                 this.map = new GameMap(hero);
             } else {
-                System.out.println("start new game");
                 this.startNew();
                 System.out.println("new game started");
             }
@@ -70,15 +68,39 @@ public class GameController {
         this.closeScanner();
     }
 
+    public int scannerGetInt(int minExclude, int maxInclude) {
+        Boolean success = false;
+        int ret = -1;
+        while (!success) {
+            try {
+                String line = this.scanner.nextLine();
+                int decision = Integer.valueOf(line);
+                if (decision > minExclude && decision <= maxInclude) {
+                    success = true;
+                    ret = decision;
+                } else {
+                    System.out.println("Please input a correct number!");
+                }
+            } catch (Exception e) {
+                this.scanner.nextLine();
+                System.out.println("exception: " + e.getMessage());
+                System.out.println("Please input a correct number!");
+            }
+        }
+        return ret;
+    }
+
     public boolean shouldLoadHerosIfExist() {
         if (this.couldLoadHeros()) {
             System.out.println("1. Start New Hero");
             System.out.println("2. Load Saved Hero");
             System.out.println("Please input the number of your decision");
-            int decision = this.scanner.nextInt();
-            if (decision == 2)
+            int decision = scannerGetInt(0, 2);
+            if (decision == 2) {
                 return true;
-            return false;
+            } else {
+                return false;
+            }
         }
         return false;
     }
@@ -98,29 +120,21 @@ public class GameController {
 
     public Hero userPickHero() {
         Hero ret = null;
-        while (ret == null) {
-            try {
-                Hero[] heros = this.savedHeros;
-                System.out.println("Existing Heros below: ");
-                for (int i = 0; i < heros.length; i++) {
-                    System.out.println(i + ": \n" + heros[i]);
-                }
-                System.out.println("Please input the number of hero you want to select");
-                int decision = this.scanner.nextInt();
-                ret = heros[decision];
-            } catch (Error e) {
-                e.printStackTrace();
-                System.out.println(e);
-                System.out.println("Please input a correct hero number!");
-            }
+        Hero[] heros = this.savedHeros;
+        System.out.println("Existing Heros below: ");
+        for (int i = 0; i < heros.length; i++) {
+            int index = i + 1;
+            System.out.println(index + ": " + heros[i]);
         }
+        System.out.println("Please input the number of hero you want to select");
+        int decision = scannerGetInt(0, heros.length) - 1;
+        ret = heros[decision];
         return ret;
     }
 
     public void saveHeros() {
         System.out.println("saving game before exit");
         try {
-            System.out.println("serilise Map");
             if (savedHeros != null && savedHeros.length > 0) {
                 Hero[] liveHeros = Arrays.stream(savedHeros).filter(hero -> hero.getHitPoints() > 0)
                         .toArray(Hero[]::new);
@@ -138,7 +152,7 @@ public class GameController {
         System.out.println("1. Fight");
         System.out.println("2. Run (to previous location)");
         System.out.println("Please input the number of your decision");
-        int decision = this.scanner.nextInt();
+        int decision = scannerGetInt(0, 2);
         if (decision == 2)
             return true;
         return false;
@@ -164,7 +178,7 @@ public class GameController {
         System.out.println("1. Yes");
         System.out.println("2. No");
         System.out.println("Please input the number of your decision");
-        int decision = this.scanner.nextInt();
+        int decision = scannerGetInt(0, 2);
         if (decision == 1)
             return true;
         return false;
@@ -181,7 +195,6 @@ public class GameController {
         System.out.println("Your next move is : " + nextMove);
         if (nextMove != null) {
             Point nextPoint = this.map.nextPosition(nextMove);
-            System.out.println("next point " + nextPoint);
             // could move
             if (nextPoint != null) {
                 if (this.map.wouldMeetVilain(nextPoint)) {
@@ -258,8 +271,7 @@ public class GameController {
                     System.out.println((i + 1) + ", " + heroClasses[i]);
                 }
                 System.out.println("Please choose the number of your hero.");
-                int index = this.scanner.nextInt() - 1;
-                this.scanner.nextLine(); // Consume the newline character left by nextInt()
+                int index = scannerGetInt(0, heroClasses.length) - 1;
                 System.out.println("You have choosen: " + heroClasses[index]);
                 hero = new Hero(heroClasses[index]);
                 System.out.println("Please input a name for your hero.(3-10 letters)");
@@ -292,12 +304,11 @@ public class GameController {
         for (int i = 0; i < moves.length; i++) { // Updated to use moves array
             System.out.println((i + 1) + ". " + moves[i]); // Changed to print moves
         }
-        int index = this.scanner.nextInt() - 1;
-        this.scanner.nextLine();
+        int index = scannerGetInt(0, moves.length) - 1;
         if (index >= 0 && index < moves.length) {
             return moves[index];
         } else {
-            System.err.println("Please input a valid number shown on screen");
+            System.out.println("Please input a valid number shown on screen");
             return null;
         }
     }
@@ -305,10 +316,8 @@ public class GameController {
     public void saveHero(Hero hero) {
         if (hero != null) {
             if (this.savedHeros == null) {
-                System.out.println("savedHeros == null");
                 this.savedHeros = new Hero[] { hero };
             } else {
-                System.out.println("savedHeros != null");
                 this.savedHeros = Arrays.copyOf(this.savedHeros, this.savedHeros.length + 1);
                 this.savedHeros[this.savedHeros.length - 1] = hero;
             }
@@ -319,11 +328,7 @@ public class GameController {
         startingText();
         Hero hero = newHeroFromInput();
         saveHero(hero);
-        System.err.println("hero get: " + hero);
         this.map = new GameMap(hero);
-    }
-
-    public void initGuiNewGame() {
     }
 
     public void closeScanner() {

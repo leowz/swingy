@@ -138,7 +138,6 @@ public class Hero extends Person {
         System.out.println("Hero gained experence: " + exp);
         this.experience += exp + exp * this.level * 0.3;
         int nextLevel = getLevel(this.level, this.experience);
-        System.out.println("nextLevel " + nextLevel);
         if (this.level < nextLevel) {
             System.out.println("Hero promot from level: " + this.level + " to level: " + nextLevel);
             System.out.println("Hero regain 30 hp due to the level up!");
