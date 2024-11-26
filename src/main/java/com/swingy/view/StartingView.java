@@ -58,8 +58,8 @@ public class StartingView extends MyView {
         return taskList;
     }
 
-    public void setCouldLoadHeroView(Boolean couldLoadGame, ActionListener loadGameAction,
-            ActionListener newGameAction) {
+    public void setCouldLoadHeroView(Boolean couldLoadGame, Consumer<Void> onLoadGame,
+            Consumer<Void> onNewGame, Consumer<Void> onExitGame) {
         frame.getContentPane().removeAll(); // Remove all components from the frame
         // Create buttons
         taskLabel = new JLabel("Welcom to the Hero Game!!!"); // Initialize JLabel
@@ -78,12 +78,16 @@ public class StartingView extends MyView {
 
         JButton loadGameButton = new JButton("Load Hero");
         JButton newGameButton = new JButton("New Hero");
+        JButton exitGameButton = new JButton("Exit Game");
 
         // Set action listener for Load Game button from caller
-        loadGameButton.addActionListener(loadGameAction);
+        loadGameButton.addActionListener(e -> onLoadGame.accept(null));
 
         // Set action listener for New Game button from caller
-        newGameButton.addActionListener(newGameAction);
+        newGameButton.addActionListener(e -> onNewGame.accept(null));
+
+        // Set action listener for New Game button from caller
+        exitGameButton.addActionListener(e -> onExitGame.accept(null));
 
         gbc.gridy++; // Move to the next row for buttons
         panel.add(newGameButton, gbc); // Add New Game button
@@ -91,6 +95,8 @@ public class StartingView extends MyView {
         if (couldLoadGame) {
             panel.add(loadGameButton, gbc); // Add Load Game button
         }
+        gbc.gridy++; // Move to the next row for buttons
+        panel.add(exitGameButton, gbc); // Add New Game button
 
         panel.revalidate(); // Refresh the panel to show new components
         panel.repaint(); // Repaint the panel
@@ -140,7 +146,7 @@ public class StartingView extends MyView {
         frame.repaint(); // Repaint the frame
     }
 
-    public void setCreatHeroView(String[] msgs, BiConsumer<HeroClass, String> onConfirm) {
+    public void setCreatHeroView(String[] msgs, BiConsumer<HeroClass, String> onConfirm, Consumer<Void> onBack) {
         // Clear existing components
         frame.getContentPane().removeAll(); // Remove all components from the frame
 
@@ -151,6 +157,7 @@ public class StartingView extends MyView {
         heroNameField.setForeground(Color.GRAY); // Set placeholder color
         heroNameField.setPreferredSize(new Dimension(200, 30)); // Set minimal width and height
         JButton confirmButton = new JButton("Confirm");
+        JButton backButton = new JButton("Back");
         JLabel displayLabel = new JLabel("", JLabel.CENTER);
         JLabel warningLabel = new JLabel("", JLabel.CENTER);
         JLabel heroTypeLabel = new JLabel("Choose Hero Type:");
@@ -213,6 +220,9 @@ public class StartingView extends MyView {
             }
         });
 
+        // Action listener for back button
+        backButton.addActionListener(e -> onBack.accept(null));
+
         // Add new components to the frame
         JPanel newPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -239,6 +249,8 @@ public class StartingView extends MyView {
         gbc.gridy++;
         gbc.insets = new Insets(10, 0, 10, 0);
         newPanel.add(confirmButton, gbc);
+        gbc.gridy++;
+        newPanel.add(backButton, gbc);
         gbc.gridy++;
         gbc.insets = new Insets(10, 0, 10, 0);
         newPanel.add(displayLabel, gbc);

@@ -24,7 +24,6 @@ import jakarta.validation.Validator;
 
 public class GuiGameController extends GameController {
     public MyView view;
-    public Boolean roundOnGoing = false;
 
     public GuiGameController() {
         super();
@@ -44,7 +43,6 @@ public class GuiGameController extends GameController {
             this.view.getFrame().dispose(); // Close the StartingView
         }
         // Create and show the HeroCreationView
-        this.roundOnGoing = false;
         GameView gameView = new GameView();
         gameView.initMap(this.map);
         gameView.initAction((Move move) -> {
@@ -70,20 +68,13 @@ public class GuiGameController extends GameController {
     public void loadOrStartNewHero() {
         StartingView view = (StartingView) this.view;
         loadHero();
-        view.setCouldLoadHeroView(this.couldLoadHeros(),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("Load Existing Hero");
-                        showLoadHero();
-                    }
-                }, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("New Hero");
-                        initNewGame(null);
-                    }
-                });
+        view.setCouldLoadHeroView(this.couldLoadHeros(), (Void) -> {
+            showLoadHero();
+        }, (Void) -> {
+            initNewGame(null);
+        }, (Void) -> {
+            System.exit(0);
+        });
     }
 
     @Override
@@ -114,7 +105,6 @@ public class GuiGameController extends GameController {
                     Boolean couldEscape = this.couldPlayerEscape();
                     if (!wantFight && couldEscape) {
                         tempView.showMessageModal("Escape Successfully, return to original place!", (Void) -> {
-                            this.roundOnGoing = false;
                             view.removeVillainStat();
                         });
                     } else {
@@ -134,11 +124,15 @@ public class GuiGameController extends GameController {
     public void moveHero(Point nextPoint) {
         this.map.moveHero(nextPoint);
         this.updateUiFromMap();
-        this.roundOnGoing = false;
     }
 
     public void heroDiedGameEnd() {
         System.out.println("Do things after hero dies");
+        GameView gameView = (GameView) this.view;
+        gameView.dismissGameView();
+        StartingView view = new StartingView();
+        setView(view);
+        start();
     }
 
     public void updateFightAnimationAndStats(Consumer<Boolean> onFinish) {
@@ -176,7 +170,7 @@ public class GuiGameController extends GameController {
                 this.moveHero(nextPoint);
             } else {
                 // hero deads;
-                gameView.showMessageModal("Your Hero Deads. Game Over", (Void) -> {
+                gameView.showMessageModal("!!! Your Hero is dead, GAME OVER !!!", (Void) -> {
                     System.out.println("Hero dead, game end!");
                     this.heroDiedGameEnd();
                 });
@@ -191,28 +185,23 @@ public class GuiGameController extends GameController {
 
     public void executeRound(Move move) {
         System.out.println("Your next move is : " + move);
-        if (roundOnGoing) {
-            System.out.println("round OnGoing");
-            return;
-        } else {
-            this.roundOnGoing = true;
-            Point nextPoint = this.map.nextPosition(move);
-            System.out.println("next point " + nextPoint);
-            // could move
-            if (nextPoint != null) {
-                if (this.map.wouldMeetVilain(nextPoint)) {
-                    escapeOrFight(nextPoint);
-                } else {
-                    this.moveHero(nextPoint);
-                }
+
+        Point nextPoint = this.map.nextPosition(move);
+        System.out.println("next point " + nextPoint);
+        // could move
+        if (nextPoint != null) {
+            if (this.map.wouldMeetVilain(nextPoint)) {
+                escapeOrFight(nextPoint);
             } else {
-                System.out.println("Your Hero wins!!! now go to next game!");
-                GameView gameView = (GameView) this.view;
-                gameView.showMessageModal("Your Hero wins this round, now move to next round.", (Void) -> {
-                    this.initNextGame();
-                    startGamingLoop();
-                });
+                this.moveHero(nextPoint);
             }
+        } else {
+            System.out.println("Your Hero wins!\n now go to next game!");
+            GameView gameView = (GameView) this.view;
+            gameView.showMessageModal("Your Hero wins this round, now move to next round.", (Void) -> {
+                this.initNextGame();
+                startGamingLoop();
+            });
         }
     }
 
@@ -236,6 +225,8 @@ public class GuiGameController extends GameController {
                 this.map = new GameMap(hero);
                 this.startGamingLoop();
             }
+        }, (Void) -> {
+            this.loadOrStartNewHero();
         });
     }
 }

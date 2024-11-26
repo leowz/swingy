@@ -217,7 +217,7 @@ public class GameView extends MyView {
         msgModalDialog.add(dismissButton, BorderLayout.SOUTH);
 
         // Set the size and location of the dialog
-        msgModalDialog.setSize(300, 150);
+        msgModalDialog.setSize(400, 200);
         msgModalDialog.setLocationRelativeTo(this.frame); // Center the dialog relative to the GameView
         msgModalDialog.setVisible(true); // Show the dialog
     }
@@ -281,6 +281,14 @@ public class GameView extends MyView {
             decisionModalDialog.dispose(); // Close the modal dialog
             decisionModalDialog = null; // Clear the reference
         }
+    }
+
+    public void dismissGameView() {
+        if (frame != null) {
+            frame.dispose(); // Close the frame
+            frame = null; // Clear the reference
+        }
+        dismissAllModal(); // Dismiss any open modals
     }
 
     public void dismissAllModal() {
