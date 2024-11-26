@@ -25,6 +25,8 @@ import com.swingy.model.Villain;
 public class GameView extends MyView {
     private JPanel mapPanel;
     private JPanel heroPanel;
+    private JPanel backPanel;
+    private JButton backButton;
     private PersonView heroView;
     private JPanel villainPanel;
     private PersonView villainView;
@@ -52,6 +54,8 @@ public class GameView extends MyView {
 
         // Create the control panel (20% height)
         controlPanel = new JPanel();
+        backPanel = new JPanel(new FlowLayout());
+        frame.add(backPanel, BorderLayout.NORTH);
         controlPanel.setLayout(new GridLayout(1, 3)); // 1 row, 3 columns
 
         // Create navigation buttons
@@ -92,6 +96,9 @@ public class GameView extends MyView {
         navPanel.add(emptyButton4); // Empty space
         navPanel.add(downButton); // Down button
         navPanel.add(emptyButton5); // Empty space
+
+        backButton = new JButton("Back");
+        backPanel.add(backButton);
 
         // Add navigation and action panels to control panel
         controlPanel.add(navPanel);
@@ -144,7 +151,7 @@ public class GameView extends MyView {
         initHeroStat();
     }
 
-    public void initAction(Consumer<Move> onClickDirection) {
+    public void initAction(Consumer<Move> onClickDirection, Consumer<Void> onClickBack) {
         // Create an array of corresponding Move enum values
         Move[] moves = { Move.North, Move.West, Move.South, Move.East };
         JButton[] directionButtons = new JButton[] { upButton, leftButton, downButton, rightButton };
@@ -159,6 +166,8 @@ public class GameView extends MyView {
                 }
             });
         }
+
+        backButton.addActionListener((e -> onClickBack.accept(null)));
     }
 
     public void updateMap() {

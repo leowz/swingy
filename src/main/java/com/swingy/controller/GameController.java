@@ -34,6 +34,7 @@ public class GameController {
 
     public void beforeGameStart() {
         scanner = new Scanner(System.in);
+        this.loadHero();
     }
 
     public void start() {
@@ -41,7 +42,6 @@ public class GameController {
         try {
             System.out.println("game starts");
             if (this.shouldLoadHerosIfExist()) {
-                this.loadHero();
                 Hero hero = this.userPickHero();
                 this.map = new GameMap(hero);
             } else {
@@ -60,7 +60,6 @@ public class GameController {
     }
 
     public void startNew() {
-        this.loadHero();
         this.initNewGame();
     }
 
@@ -106,6 +105,7 @@ public class GameController {
     }
 
     public void loadHero() {
+        System.out.println("loadHero");
         if (herosFile.exists()) {
             try {
                 Hero[] heros = om.readValue(herosFile, Hero[].class);
@@ -322,6 +322,7 @@ public class GameController {
                 this.savedHeros[this.savedHeros.length - 1] = hero;
             }
         }
+        System.out.println("saved hero " + this.savedHeros.length);
     }
 
     public void initNewGame() {

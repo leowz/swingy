@@ -46,6 +46,11 @@ public class GuiGameController extends GameController {
         gameView.initAction((Move move) -> {
             System.out.println("Move: " + move);
             executeRound(move);
+        }, (Void) -> {
+            gameView.dismissGameView();
+            StartingView newView = new StartingView();
+            setView(newView);
+            loadOrStartNewHero();
         });
         this.view = gameView;
     }
@@ -54,6 +59,7 @@ public class GuiGameController extends GameController {
     }
 
     public void showLoadHero() {
+        System.out.println("showLoadHero this.savedHeros: " + this.savedHeros.length);
         StartingView view = (StartingView) this.view;
         view.setLoadHeroView(this.savedHeros, (Hero hero) -> {
             this.map = new GameMap(hero);
@@ -65,7 +71,7 @@ public class GuiGameController extends GameController {
 
     public void loadOrStartNewHero() {
         StartingView view = (StartingView) this.view;
-        loadHero();
+        System.out.println("loadOrStartNewHero this.savedHeros: " + this.savedHeros.length);
         view.setCouldLoadHeroView(this.couldLoadHeros(), (Void) -> {
             showLoadHero();
         }, (Void) -> {
@@ -77,6 +83,7 @@ public class GuiGameController extends GameController {
 
     @Override
     public void start() {
+        loadHero();
         loadOrStartNewHero();
     }
 
