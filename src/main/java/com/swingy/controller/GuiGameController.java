@@ -108,11 +108,11 @@ public class GuiGameController extends GameController {
                     } else {
                         if (!wantFight && !couldEscape) {
                             tempView.showMessageModal("Failed to escape, start battle!", (Void) -> {
-                                System.out.println("Battel started");
+                                System.out.println("Battle started");
                                 this.fightBattle(nexPoint);
                             });
                         } else {
-                            System.out.println("Battel started");
+                            System.out.println("Battle started");
                             this.fightBattle(nexPoint);
                         }
                     }
