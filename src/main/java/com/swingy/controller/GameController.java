@@ -228,14 +228,8 @@ public class GameController {
     }
 
     public boolean couldLoadHeros() {
-        if (herosFile.exists()) {
-            try {
-                Hero[] heros = om.readValue(herosFile, Hero[].class);
-                return heros.length > 0;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
+        if (this.savedHeros != null && this.savedHeros.length > 0) {
+            return true;
         }
         return false;
     }
