@@ -105,7 +105,6 @@ public class GameController {
     }
 
     public void loadHero() {
-        System.out.println("loadHero");
         if (herosFile.exists()) {
             try {
                 Hero[] heros = om.readValue(herosFile, Hero[].class);
@@ -322,7 +321,6 @@ public class GameController {
                 this.savedHeros[this.savedHeros.length - 1] = hero;
             }
         }
-        System.out.println("saved hero " + this.savedHeros.length);
     }
 
     public void initNewGame() {
