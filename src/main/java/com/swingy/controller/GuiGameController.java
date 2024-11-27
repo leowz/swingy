@@ -57,6 +57,7 @@ public class GuiGameController extends GameController {
     }
 
     public void beforeGameExit() {
+        this.saveHeros();
     }
 
     public void showLoadHero() {
@@ -76,6 +77,7 @@ public class GuiGameController extends GameController {
         }, (Void) -> {
             initNewGame(null);
         }, (Void) -> {
+            beforeGameExit();
             System.exit(0);
         });
     }
@@ -91,10 +93,8 @@ public class GuiGameController extends GameController {
         try {
             System.out.println("game starts");
         } catch (Error error) {
-            beforeGameExit();
             throw error;
         }
-        beforeGameExit();
     }
 
     public void escapeOrFight(Point nexPoint) {

@@ -134,7 +134,7 @@ public class GameController {
     public void saveHeros() {
         System.out.println("saving game before exit");
         try {
-            if (savedHeros != null && savedHeros.length > 0) {
+            if (savedHeros != null) {
                 Hero[] liveHeros = Arrays.stream(savedHeros).filter(hero -> hero.getHitPoints() > 0)
                         .toArray(Hero[]::new);
                 om.writeValue(herosFile, liveHeros);
