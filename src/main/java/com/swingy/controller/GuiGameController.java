@@ -1,6 +1,7 @@
 package com.swingy.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -17,8 +18,8 @@ import com.swingy.view.StartingView;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
-import jakarta.validation.ValidatorFactory;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 public class GuiGameController extends GameController {
     public MyView view;
@@ -130,12 +131,14 @@ public class GuiGameController extends GameController {
     }
 
     public void heroDiedGameEnd() {
-        System.out.println("Do things after hero dies");
+        Hero[] liveHeros = Arrays.stream(savedHeros).filter(hero -> hero.getHitPoints() > 0)
+                        .toArray(Hero[]::new);
+        this.savedHeros = liveHeros;
         GameView gameView = (GameView) this.view;
         gameView.dismissGameView();
         StartingView view = new StartingView();
         setView(view);
-        start();
+        loadOrStartNewHero();
     }
 
     public void updateFightAnimationAndStats(Consumer<Boolean> onFinish) {
