@@ -6,7 +6,7 @@
 #    By: zweng <zweng@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/19 12:41:50 by zweng             #+#    #+#              #
-#    Updated: 2024/11/24 18:25:23 by zweng            ###   ########.fr        #
+#    Updated: 2024/11/27 10:19:49 by zweng            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,7 @@ build:
 
 clean: 
 	@$(MV) clean
-	@rm -rf map.json
+	@rm -rf heros.json
 
 re: fclean all
 
